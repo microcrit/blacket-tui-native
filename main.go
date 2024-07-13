@@ -42,18 +42,21 @@ const ESCAPE = 27
 const UP_ARROW = 259
 const DOWN_ARROW = 258
 
-func SelectLayout(stdscr *goncurses.Window, title string, choices []Choice) bool {
+func SelectLayout(stdscr *goncurses.Window, title string, choices []Choice) int {
 	choicesTexts := []string{}
 	for _, choice := range choices {
 		choicesTexts = append(choicesTexts, choice.Text)
 	}
+	choicesTexts = append(choicesTexts, "Exit")
 
 	selected := RawSelect(stdscr, title, choicesTexts)
 	if selected == -1 {
-		return false
+		return 0
+	} else if selected == len(choicesTexts)-1 {
+		return -1
 	}
 	choices[selected].Action()
-	return true
+	return 1
 }
 
 func RawSelect(stdscr *goncurses.Window, title string, choices []string) int {
@@ -244,13 +247,12 @@ func Layout(config map[string]interface{}) string {
 			},
 		})
 
-		if !action {
+		if action == -1 || action == 0 {
 			break
 		}
 	}
 
 	stdscr.Refresh()
-	stdscr.GetChar()
 
 	return ""
 }
