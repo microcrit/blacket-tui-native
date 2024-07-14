@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"crit.rip/blacket-tui/api"
@@ -47,6 +48,46 @@ func Login(username string, password string) string {
 	}
 
 	return util.ParseCookie(cookie)
+}
+
+func LoginProxy(username string, password string, proxy string) string {
+	values := map[string]string{
+		"username": username,
+		"password": password,
+	}
+	jsonValue, _ := json.Marshal(values)
+
+	const BASE = api.API_BASE
+
+	client := &http.Client{}
+	url, err := url.Parse(proxy)
+	if err != nil {
+		panic(err)
+	}
+	client.Transport = &http.Transport{
+		Proxy: http.ProxyURL(url),
+	}
+
+	resp, err := client.Post(BASE+"/worker/login", "application/json", bytes.NewBuffer(jsonValue))
+	if err != nil {
+		panic(err)
+	}
+
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+
+	doc := responses.GenericResponse{}
+	err = json.Unmarshal([]byte(body), &doc)
+	if err != nil {
+		panic(err)
+	}
+
+	if doc.Error {
+		panic(doc.Reason)
+	}
+
+	return util.ParseCookie(resp.Header.Get("Set-Cookie"))
 }
 
 func GetUserBase(stdscr *goncurses.Window, token string, path string) responses.UserResponse {

@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
-	"slices"
 	"sync"
 	"time"
 
@@ -15,6 +15,12 @@ import (
 )
 
 var URLS = [...]string{
+	"https://raw.githubusercontent.com/zloi-user/hideip.me/main/https.txt",
+	"https://raw.githubusercontent.com/Anonym0usWork1221/Free-Proxies/main/proxy_files/https_proxies.txt",
+	"https://raw.githubusercontent.com/officialputuid/KangProxy/KangProxy/https/https.txt",
+	"https://www.proxy-list.download/api/v1/get?type=https",
+	"https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/https.txt",
+
 	"https://api.proxyscrape.com/v3/free-proxy-list/get?request=getproxies&proxy_format=ipport&format=text",
 	"https://www.proxy-list.download/api/v1/get?type=http",
 	"https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt",
@@ -32,7 +38,7 @@ func CheckProxy(ip string, port string, shouldStop *bool) bool {
 	}
 	client := &http.Client{Transport: &http.Transport{Proxy: http.ProxyURL(proxyUrl)}}
 	client.Timeout = 3 * time.Second
-	request := &http.Request{Method: "GET", URL: &url.URL{Host: "httpbin.org", Scheme: "http"}}
+	request := &http.Request{Method: "GET", URL: &url.URL{Host: "httpbin.org", Path: "/get", Scheme: "http"}}
 	if *shouldStop {
 		return false
 	}
@@ -45,7 +51,7 @@ var IP_PORT_REGEX = `(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):(\d{1,5})`
 func Log(text string, currentY int, maxY int, maxX int) int {
 	if currentY >= maxY-3 {
 		currentY = 0
-		for i := 0; i < maxY-3; i++ {
+		for i := 0; i < maxY-2; i++ {
 			stdscr.MovePrint(i, 0, strings.Repeat(" ", maxX))
 		}
 	}

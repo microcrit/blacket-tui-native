@@ -12,6 +12,7 @@ import (
 	"crit.rip/blacket-tui/api/objects/user"
 	confParser "crit.rip/blacket-tui/config"
 	"crit.rip/blacket-tui/providers/chat"
+	"crit.rip/blacket-tui/providers/packs"
 	"crit.rip/blacket-tui/providers/proxies"
 
 	"crit.rip/blacket-tui/ui"
@@ -243,6 +244,33 @@ func Layout(config map[string]interface{}) string {
 				Text: "Open Chat - Controller account",
 				Action: func() {
 					chat.Handler(token, user)
+				},
+			},
+			{
+				Text: "Open Packs - Sub accounts",
+				Action: func() {
+					op := config["PackOpener"].(map[string]interface{})
+					accounts := config["Accounts"].([]interface{})
+					maxThreads := 5
+					if op["Threads"] != nil {
+						maxThreads = int(op["Threads"].(int64))
+					}
+					proxyFile := config["ProxyScraper"].(map[string]interface{})["File"].(string)
+					content, err := os.ReadFile(proxyFile)
+					if err != nil {
+						panic(err)
+					}
+					proxies := strings.Split(string(content), "\n")
+					realAccounts := []map[string]string{}
+					for _, account := range accounts {
+						if account.(map[string]interface{})["Username"] != raux {
+							realAccounts = append(realAccounts, map[string]string{
+								"Username": account.(map[string]interface{})["Username"].(string),
+								"Password": account.(map[string]interface{})["Password"].(string),
+							})
+						}
+					}
+					packs.Handler(stdscr, realAccounts, int64(maxThreads), proxies)
 				},
 			},
 		})
