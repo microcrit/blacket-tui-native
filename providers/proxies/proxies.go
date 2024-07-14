@@ -20,7 +20,6 @@ var URLS = [...]string{
 	"https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt",
 	"https://raw.githubusercontent.com/sunny9577/proxy-scraper/master/generated/http_proxies.txt",
 	"https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/protocols/http/data.txt",
-	"https://free-proxy-list.net", // not the safest way of doing this, but this extracts from the "raw list" textarea. :thumbsup:
 	"https://raw.githubusercontent.com/ErcinDedeoglu/proxies/main/proxies/http.txt",
 	"https://github.com/zloi-user/hideip.me/raw/main/http.txt",
 	"https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/http.txt",
@@ -46,7 +45,7 @@ var IP_PORT_REGEX = `(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):(\d{1,5})`
 func Log(text string, currentY int, maxY int, maxX int) int {
 	if currentY >= maxY-3 {
 		currentY = 0
-		for i := 0; i < maxY-2; i++ {
+		for i := 0; i < maxY-3; i++ {
 			stdscr.MovePrint(i, 0, strings.Repeat(" ", maxX))
 		}
 	}
