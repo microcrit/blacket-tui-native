@@ -1,6 +1,0 @@
-Accounts = []
-
-[ProxyScraper]
-  File = "proxies.txt"
-  Max = 10
-  Threads = 10

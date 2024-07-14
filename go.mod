@@ -7,3 +7,5 @@ require (
 	github.com/gorilla/websocket v1.5.3
 	github.com/pelletier/go-toml v1.9.5
 )
+
+require github.com/hugolgst/rich-go v0.0.0-20230917173849-4a4fb1d3c362

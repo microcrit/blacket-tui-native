@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"slices"
 	"sync"
 	"time"
 
@@ -19,6 +20,10 @@ var URLS = [...]string{
 	"https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt",
 	"https://raw.githubusercontent.com/sunny9577/proxy-scraper/master/generated/http_proxies.txt",
 	"https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/protocols/http/data.txt",
+	"https://free-proxy-list.net", // not the safest way of doing this, but this extracts from the "raw list" textarea. :thumbsup:
+	"https://raw.githubusercontent.com/ErcinDedeoglu/proxies/main/proxies/http.txt",
+	"https://github.com/zloi-user/hideip.me/raw/main/http.txt",
+	"https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/http.txt",
 }
 
 func CheckProxy(ip string, port string, shouldStop *bool) bool {
@@ -150,6 +155,9 @@ func Handler(stdscrx *goncurses.Window, limit int64, threads int64) []string {
 			currentY = Log(ip, currentY, maxY, maxX)
 		}
 	}
+
+	slices.Sort(ips)
+	ips = slices.Compact(ips)
 
 	results := []string{}
 	chunked := chunkSlice(ips, threads)
